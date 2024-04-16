@@ -111,7 +111,7 @@ def sea_ice_concentration(Tb, Ti, To):
     CI[CI > 1] = 1
     return CI
 
-CI_18_7 = sea_ice_concentration(tb_18_7h_svalbard, Ti, To)
+CI_18_7 = sea_ice_concentration(tb_18_7v_svalbard, Ti, To)
 CI_36_5 = sea_ice_concentration(tb_36_5h_svalbard, Ti, To)
 CI_85_0 = sea_ice_concentration(tb_85_0v_svalbard, Ti, To)
 
@@ -134,12 +134,13 @@ def task_3():
     ax.set_ylim(-1.102e+05, 1.142e+06)
     ax.gridlines(draw_labels=True, y_inline=False)
 
-    pcm = ax.pcolormesh(lon, lat, CI_85_0, transform=orig_proj, alpha=1, cmap="cool") # vmin=0, vmax=1
+    pcm = ax.pcolormesh(lon, lat, CI_18_7, transform=orig_proj, alpha=1, cmap="viridis") # vmin=0, vmax=1
+    #pcm = ax.pcolormesh(lon, lat, CI_85_0, transform=orig_proj, alpha=1, cmap="cool") # vmin=0, vmax=1
     #pcm = ax.pcolormesh(lon, lat, CI_36_5, transform=orig_proj, cmap='viridis', alpha=1) # vmin=0, vmax=1
     cbar = plt.colorbar(pcm, label='Sea Ice Concentration (%)') # ax=ax, shrink=0.6, aspect=30
-    cbar.set_ticks([0.3, 0.40, 0.50, 0.60, 0.70, 0.80])  # Set the tick locations
-    cbar.ax.set_yticklabels(["30%", "40%", "50%", "60%", "70%", "80%"])  # Set the tick labels
-    plt.title('Sea Ice Concentration H-pol 18.7GHz')
+    cbar.set_ticks([0.6, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90])  # Set the tick locations
+    cbar.ax.set_yticklabels(["60%", "65%", "70%", "75%", "80%", "85%", "90%"])  # Set the tick labels
+    plt.title('Sea Ice Concentration V-pol 18.7GHz')
     plt.xlabel('Longitude')
     plt.ylabel('Latitude')
     plt.show()
@@ -157,42 +158,39 @@ def task_4():
     # spectral gradient ratio
     GR = (tb_36_5v_svalbard - tb_18_7v_svalbard) / (tb_36_5v_svalbard + tb_18_7v_svalbard)
     GR_H = (tb_36_5h_svalbard - tb_18_7h_svalbard) / (tb_36_5h_svalbard + tb_18_7h_svalbard)
+    print(GR.max(), GR.min(), "GR")
     
     # Polarization gradient ratio
     PR_18 = (tb_18_7v_svalbard - tb_18_7h_svalbard) / (tb_18_7v_svalbard + tb_18_7h_svalbard)
     PR_36 = (tb_36_5v_svalbard - tb_36_5h_svalbard) / (tb_36_5v_svalbard + tb_36_5h_svalbard)
-    #ice_edge = (PR_18 >= 0.15) & (PR_36 >= 0.15) 
-    #ice_edge_18 = (PR_18 >= 0.08) & (PR_18 <= 0.15)
-    #ice_edge_36 = (PR_36 >= 0.08) & (PR_36 <= 0.15)
-    #ice_edge = ice_edge_18 & ice_edge_36
-    #mask_ice_edge = np.ma.masked_where(ice_edge, PR_18)
     
-    PR_threshold = 0.15  # Adjust this threshold as needed
-
+    print(PR_18.max(), PR_18.min(), "18")
+    print(PR_36.max(), PR_36.min(), "36")
     # Detect the ice edge based on the threshold
-    ice_edge_18 = (PR_18 >= 0) & (PR_18 <= 0.18)#PR_threshold
-    ice_edge_36 = (PR_36 >= 0) & (PR_36 <= 0.18)#PR_threshold
-    ice_edge = (ice_edge_18 & ice_edge_36) 
+    ice_edge_18 = (PR_18 >= 0) & (PR_18 <= 0.20)#PR_threshold
+    ice_edge_36 = (PR_36 >= 0) & (PR_36 <= 0.12)#PR_threshold
+    ice_edge = ice_edge_18 & ice_edge_36
     
     # Plot the ice edge on a map
-    """ plt.contour(lon, lat, ice_edge, levels=[0.5], colors='black', linewidths=1)
-    #plt.contour(lon, lat, ice_edge_18, levels=[0.5], colors='red', linewidths=1)
-    #plt.contour(lon, lat, ice_edge_36, levels=[0.5], colors='blue', linewidths=1)
-    #plt.pcolormesh(lon, lat, ice_edge, cmap='cool')
+    """ plt.contour(lon, lat, ice_edge, levels=[0.5], colors='white', linewidths=1)
+    plt.contour(lon, lat, ice_edge_18, levels=[0.5], colors='lime', linewidths=1)
+    #plt.contour(lon, lat, ice_edge_36, levels=[0.5], colors='black', linewidths=1)
+    plt.pcolormesh(lon, lat, ice_edge, cmap='cool')
     #plt.pcolormesh(lon, lat, PR_18, cmap='cool')
-    plt.pcolormesh(lon, lat, PR_36, cmap='cool')
+    #plt.pcolormesh(lon, lat, PR_36, cmap='cool')
     plt.colorbar(label='Ice Edge Detection')
     plt.title('Ice Edge Detection')
     plt.xlabel('Longitude')
     plt.ylabel('Latitude')
-    plt.show()
-     """
-    open_water = (GR > 0.05) #& (GR < CI_threshold_water)
-    new_ice = (GR > -0.02) & (GR<0.05)   #& (GR <= CI_threshold_new)
-    older_ice = GR < -0.02 #(open_water | new_ice)    
+    plt.show() """
     
-    open_water_mask = np.ma.masked_where(~open_water, GR)
-    new_ice_mask = np.ma.masked_where(~new_ice, GR)
+    open_water = (GR > -0.051) #& (GR < CI_threshold_water)
+    new_ice = (GR > -0.02) & (GR<0.02)   #& (GR <= CI_threshold_new)
+    older_ice = (GR>0.04) & (GR < 0.12) #(open_water | new_ice)    
+    
+    
+    open_water_mask = np.ma.masked_where(open_water, GR)
+    new_ice_mask = np.ma.masked_where(new_ice, GR)
     older_ice_mask = np.ma.masked_where(~older_ice, GR)
     
     fig = plt.figure(figsize=(10, 8))
@@ -205,20 +203,20 @@ def task_4():
     ax.gridlines(draw_labels=True, y_inline=False)
 
     # Plot the data
-    c1 = plt.pcolormesh(lon, lat, open_water_mask, transform=ccrs.PlateCarree(), cmap='Blues', alpha=1)
-    c2 = plt.pcolormesh(lon, lat, new_ice_mask, transform=ccrs.PlateCarree(), cmap='Greens', alpha=1)
+    #c1 = plt.pcolormesh(lon, lat, open_water_mask, transform=ccrs.PlateCarree(), cmap='Blues', alpha=1)
+    #c2 = plt.pcolormesh(lon, lat, new_ice_mask, transform=ccrs.PlateCarree(), cmap='Greens', alpha=1)
     c3 = plt.pcolormesh(lon, lat, older_ice_mask, transform=ccrs.PlateCarree(), cmap='Oranges', alpha=1)
 
     plt.contour(lon, lat, ice_edge, levels=[0.5], colors='black', linewidths=1, transform = ccrs.PlateCarree())
 
     # Create a colorbar for each pcolormesh
     ax1 = fig.add_axes([0.235, 0.05, 0.15, 0.02])
-    cb1 = mcolorbar.ColorbarBase(ax1, cmap=c1.cmap, norm=c1.norm, orientation='horizontal')
-    cb1.set_label("Open water")
+    #cb1 = mcolorbar.ColorbarBase(ax1, cmap=c1.cmap, norm=c1.norm, orientation='horizontal')
+    #cb1.set_label("Open water")
     ax1.tick_params(labelbottom=False, labeltop=False, bottom=False, top=False)
     ax2 = fig.add_axes([0.435, 0.05, 0.15, 0.02])
-    cb2 = mcolorbar.ColorbarBase(ax2, cmap=c2.cmap, norm=c2.norm, orientation='horizontal')
-    cb2.set_label("New ice")
+    #cb2 = mcolorbar.ColorbarBase(ax2, cmap=c2.cmap, norm=c2.norm, orientation='horizontal')
+    #cb2.set_label("New ice")
     ax2.tick_params(labelbottom=False, labeltop=False, bottom=False, top=False)
     ax3 = fig.add_axes([0.635, 0.05, 0.15, 0.02])
     cb3 = mcolorbar.ColorbarBase(ax3, cmap=c3.cmap, norm=c3.norm, orientation='horizontal')

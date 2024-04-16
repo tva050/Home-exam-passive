@@ -169,18 +169,18 @@ def task_4():
     ice_edge = ice_edge_18 | ice_edge_36
     
     # Plot the ice edge on a map
-    """ cs1 = plt.contour(lon, lat, ice_edge, levels=[0.5], colors='black', linewidths=1, label='Ice Edge')
+    cs1 = plt.contour(lon, lat, ice_edge, levels=[0.5], colors='black', linewidths=1, label='Ice Edge')
     #plt.contour(lon, lat, ice_edge_18, levels=[0.5], colors='lime', linewidths=1)
     #plt.contour(lon, lat, ice_edge_36, levels=[0.5], colors='black', linewidths=1)
     plt.pcolormesh(lon, lat, ice_edge, cmap='cool')
     #plt.pcolormesh(lon, lat, PR_18, cmap='cool')
     #plt.pcolormesh(lon, lat, PR_36, cmap='cool')
-    plt.text(-6.5, 76.66, 'Ice Edge', fontsize=6, color='black')
+    plt.text(-6.5, 76.66, 'Ice Edge', fontsize=7, color='black')
     plt.colorbar(label='Ice Edge Detection')
     plt.title('Ice Edge Detection')
     plt.xlabel('Longitude')
     plt.ylabel('Latitude')
-    plt.show() """
+    plt.show()
     
     # don't remove
     open_water = (GR_85 > 0.05) 
@@ -195,7 +195,7 @@ def task_4():
     new_ice_mask = np.ma.masked_where(~new_ice, GR_85)
     older_ice_mask = np.ma.masked_where(~older_ice, GR_85)
     
-    fig = plt.figure(figsize=(10, 8))
+    """ fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(1, 1, 1, projection=target_proj)
     ax.set_extent([lon_min_geo-1, lon_max_geo+1, lat_min_geo, lat_max_geo], crs=orig_proj)
     ax.coastlines(resolution='10m')
@@ -226,7 +226,7 @@ def task_4():
     ax3.tick_params(labelbottom=False, labeltop=False, bottom=False, top=False)
 
     fig.suptitle('Sea Ice Classification', fontsize=16, y=1) 
-    plt.show()
+    plt.show() """
     
 
 # ------------------------------- Task 5 -------------------------------- #
@@ -284,7 +284,7 @@ def task_5():
     c3 = plt.pcolormesh(lon, lat, tb_36V, transform=ccrs.PlateCarree(), cmap='Reds', vmin=0, vmax=213)
     c4 = plt.pcolormesh(lon, lat, tb_36H, transform=ccrs.PlateCarree(), cmap='Reds', vmin=0, vmax=213)
     c5 = plt.pcolormesh(lon, lat, mask_over5cm_18, transform=ccrs.PlateCarree(), cmap='Blues_r')
-    #c6 = plt.pcolormesh(lon, lat, mask_over5cm_36, transform=ccrs.PlateCarree(), cmap='Blues_r')
+    c6 = plt.pcolormesh(lon, lat, mask_over5cm_36, transform=ccrs.PlateCarree(), cmap='Blues_r')
     
     
     ax1 = fig.add_axes([0.2, 0.05, 0.15, 0.02])
@@ -301,7 +301,7 @@ def task_5():
 if __name__ == '__main__':
     #task_2()
     #task_3()
-    task_4()
-    #task_5()
+    #task_4()
+    task_5()
     
     
